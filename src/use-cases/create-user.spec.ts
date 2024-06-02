@@ -47,7 +47,7 @@ describe('Create user use case', () => {
       password: 'mock-password',
     })
 
-    expect(() =>
+    await expect(() =>
       createUserUseCase.execute({
         name: 'mock-name',
         email: sameEmail,
