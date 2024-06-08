@@ -2,14 +2,26 @@ import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
 import { InMemoryCheckInsRepository } from '@/repositories/in-memory/in-memory-check-ins-repository'
 import { CheckInUseCase } from './check-in'
 import { OnlyOneCheckInPerDayAllowed } from './errors/only-one-check-in-per-day-allowed-error'
+import { InMemoryGymsRepository } from '@/repositories/in-memory/in-memory-gyms-repository'
 
 let checkInsRepository: InMemoryCheckInsRepository
+let gymsRepository: InMemoryGymsRepository
 let checkInUseCase: CheckInUseCase
 
-describe('Create user use case', () => {
-  beforeEach(() => {
+describe('Create check-in use case', () => {
+  beforeEach(async () => {
     checkInsRepository = new InMemoryCheckInsRepository()
-    checkInUseCase = new CheckInUseCase(checkInsRepository)
+    gymsRepository = new InMemoryGymsRepository()
+    checkInUseCase = new CheckInUseCase(checkInsRepository, gymsRepository)
+
+    await gymsRepository.create({
+      id: 'mock-gym-id',
+      name: 'mock-gym-name',
+      description: 'mock-gym-description',
+      phone: 'mock-gym-phone',
+      latitude: 0,
+      longitude: 0,
+    })
 
     vi.useFakeTimers()
   })
@@ -18,10 +30,12 @@ describe('Create user use case', () => {
     vi.useRealTimers()
   })
 
-  it('should successfully create a user', async () => {
+  it('should successfully create a check-in', async () => {
     const { checkIn } = await checkInUseCase.execute({
       userId: 'mock-user-id',
       gymId: 'mock-gym-id',
+      userLatitude: 1,
+      userLongitude: 2,
     })
 
     expect(checkIn).toBeTruthy()
@@ -33,12 +47,16 @@ describe('Create user use case', () => {
     await checkInUseCase.execute({
       userId: 'mock-user-id',
       gymId: 'mock-gym-id',
+      userLatitude: 1,
+      userLongitude: 2,
     })
 
     await expect(() =>
       checkInUseCase.execute({
         userId: 'mock-user-id',
         gymId: 'mock-gym-id',
+        userLatitude: 1,
+        userLongitude: 2,
       }),
     ).rejects.toBeInstanceOf(OnlyOneCheckInPerDayAllowed)
   })
@@ -49,6 +67,8 @@ describe('Create user use case', () => {
     await checkInUseCase.execute({
       userId: 'mock-user-id',
       gymId: 'mock-gym-id',
+      userLatitude: 1,
+      userLongitude: 2,
     })
 
     vi.setSystemTime(new Date(2024, 0, 2, 12, 0, 0))
@@ -56,6 +76,8 @@ describe('Create user use case', () => {
     const { checkIn } = await checkInUseCase.execute({
       userId: 'mock-user-id',
       gymId: 'mock-gym-id',
+      userLatitude: 1,
+      userLongitude: 2,
     })
 
     expect(checkIn).toBeTruthy()
