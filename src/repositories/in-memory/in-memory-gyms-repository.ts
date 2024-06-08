@@ -6,7 +6,6 @@ export class InMemoryGymsRepository implements GymsRepository {
   public gyms: Gym[] = []
 
   async create(data: Prisma.GymCreateInput) {
-    console.log(data)
     const gym: Gym = {
       id: data.id ?? randomUUID(),
       name: data.name,
@@ -23,7 +22,6 @@ export class InMemoryGymsRepository implements GymsRepository {
   }
 
   async findById(id: string) {
-    console.log(this.gyms)
     const gym = this.gyms.find((gym) => gym.id === id)
 
     if (!gym) return null
