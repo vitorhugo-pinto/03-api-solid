@@ -1,8 +1,10 @@
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
 import { InMemoryCheckInsRepository } from '@/repositories/in-memory/in-memory-check-ins-repository'
 import { CheckInUseCase } from './check-in'
-import { OnlyOneCheckInPerDayAllowed } from './errors/only-one-check-in-per-day-allowed-error'
+import { OnlyOneCheckInPerDayAllowedError } from './errors/only-one-check-in-per-day-allowed-error'
 import { InMemoryGymsRepository } from '@/repositories/in-memory/in-memory-gyms-repository'
+import { Decimal } from '@prisma/client/runtime/library'
+import { OutOfRangeError } from './errors/out-of-range-error'
 
 let checkInsRepository: InMemoryCheckInsRepository
 let gymsRepository: InMemoryGymsRepository
@@ -19,9 +21,15 @@ describe('Create check-in use case', () => {
       name: 'mock-gym-name',
       description: 'mock-gym-description',
       phone: 'mock-gym-phone',
-      latitude: 0,
-      longitude: 0,
+      latitude: new Decimal(-5.8211034),
+      longitude: new Decimal(-35.2228748),
     })
+
+    // in range
+    // -5.8212464 - -35.2225783
+
+    // out of range
+    // -5.8228616 - -35.2087766
 
     vi.useFakeTimers()
   })
@@ -34,8 +42,8 @@ describe('Create check-in use case', () => {
     const { checkIn } = await checkInUseCase.execute({
       userId: 'mock-user-id',
       gymId: 'mock-gym-id',
-      userLatitude: 1,
-      userLongitude: 2,
+      userLatitude: -5.8212464,
+      userLongitude: -35.2225783,
     })
 
     expect(checkIn).toBeTruthy()
@@ -47,18 +55,18 @@ describe('Create check-in use case', () => {
     await checkInUseCase.execute({
       userId: 'mock-user-id',
       gymId: 'mock-gym-id',
-      userLatitude: 1,
-      userLongitude: 2,
+      userLatitude: -5.8212464,
+      userLongitude: -35.2225783,
     })
 
     await expect(() =>
       checkInUseCase.execute({
         userId: 'mock-user-id',
         gymId: 'mock-gym-id',
-        userLatitude: 1,
-        userLongitude: 2,
+        userLatitude: -5.8212464,
+        userLongitude: -35.2225783,
       }),
-    ).rejects.toBeInstanceOf(OnlyOneCheckInPerDayAllowed)
+    ).rejects.toBeInstanceOf(OnlyOneCheckInPerDayAllowedError)
   })
 
   it('should create two check-ins due to different dates', async () => {
@@ -67,8 +75,8 @@ describe('Create check-in use case', () => {
     await checkInUseCase.execute({
       userId: 'mock-user-id',
       gymId: 'mock-gym-id',
-      userLatitude: 1,
-      userLongitude: 2,
+      userLatitude: -5.8212464,
+      userLongitude: -35.2225783,
     })
 
     vi.setSystemTime(new Date(2024, 0, 2, 12, 0, 0))
@@ -76,10 +84,21 @@ describe('Create check-in use case', () => {
     const { checkIn } = await checkInUseCase.execute({
       userId: 'mock-user-id',
       gymId: 'mock-gym-id',
-      userLatitude: 1,
-      userLongitude: 2,
+      userLatitude: -5.8212464,
+      userLongitude: -35.2225783,
     })
 
     expect(checkIn).toBeTruthy()
+  })
+
+  it('should throw out of gym range', async () => {
+    await expect(() =>
+      checkInUseCase.execute({
+        userId: 'mock-user-id',
+        gymId: 'mock-gym-id',
+        userLatitude: -5.8228616,
+        userLongitude: -35.2087766,
+      }),
+    ).rejects.toBeInstanceOf(OutOfRangeError)
   })
 })
