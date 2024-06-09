@@ -4,6 +4,8 @@ import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
 interface IFetchUserCheckInsUseCaseRequest {
   userId: string
+  page: number
+  size: number
 }
 
 interface IFetchUserCheckInsUseCaseResponse {
@@ -20,8 +22,14 @@ export class FetchUserCheckInsUseCase {
 
   async execute({
     userId,
+    page,
+    size,
   }: IFetchUserCheckInsUseCaseRequest): Promise<IFetchUserCheckInsUseCaseResponse> {
-    const checkIns = await this.checkInsRepository.findManyByUserId(userId)
+    const checkIns = await this.checkInsRepository.findManyByUserId(
+      userId,
+      page,
+      size,
+    )
 
     if (!checkIns) throw new ResourceNotFoundError()
 

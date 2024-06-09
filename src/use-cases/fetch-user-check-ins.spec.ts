@@ -24,9 +24,29 @@ describe('Fetch user check-ins ', () => {
 
     const { userId, checkIns } = await fetchUserCheckInsUseCase.execute({
       userId: 'mock-user-id',
+      page: 1,
+      size: 10,
     })
 
     expect(checkIns).toHaveLength(2)
+    expect(userId).toEqual(expect.any(String))
+  })
+
+  it('should fetch user check-ins of a certain page', async () => {
+    for (let i = 1; i <= 13; i++) {
+      await checkInsRepository.create({
+        user_id: 'mock-user-id',
+        gym_id: `mock-gym-id-${i}`,
+      })
+    }
+
+    const { userId, checkIns } = await fetchUserCheckInsUseCase.execute({
+      userId: 'mock-user-id',
+      page: 2,
+      size: 10,
+    })
+
+    expect(checkIns).toHaveLength(3)
     expect(userId).toEqual(expect.any(String))
   })
 })
