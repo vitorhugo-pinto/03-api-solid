@@ -8,4 +8,5 @@ export interface CheckInsRepository {
     page: number,
     size: number,
   ): Promise<CheckIn[] | null>
+  getTotalCheckInsByUserId(userId: string): Promise<number>
 }
