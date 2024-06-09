@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { Prisma } from '@prisma/client'
+import { CheckIn, Prisma } from '@prisma/client'
 import { CheckInsRepository } from '../check-ins-repository'
 import dayjs from 'dayjs'
 
@@ -26,5 +26,15 @@ export class PrismaCheckInsRepository implements CheckInsRepository {
     })
 
     return checkIn
+  }
+
+  async findManyByUserId(userId: string) {
+    const checkIns: CheckIn[] = await prisma.checkIn.findMany({
+      where: {
+        user_id: userId,
+      },
+    })
+
+    return checkIns
   }
 }
