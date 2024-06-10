@@ -41,12 +41,12 @@ export class PrismaCheckInsRepository implements CheckInsRepository {
   }
 
   async getTotalCheckInsByUserId(userId: string) {
-    const checkIns: CheckIn[] = await prisma.checkIn.findMany({
+    const totalCheckIns: number = await prisma.checkIn.count({
       where: {
         user_id: userId,
       },
     })
 
-    return checkIns.length
+    return totalCheckIns
   }
 }
