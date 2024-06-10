@@ -28,4 +28,12 @@ export class InMemoryGymsRepository implements GymsRepository {
 
     return gym
   }
+
+  async search(searchFor: string, page: number, size: number) {
+    const gyms = this.gyms
+      .filter((gym) => gym.name.includes(searchFor))
+      .slice((page - 1) * size, page * size)
+
+    return gyms
+  }
 }
