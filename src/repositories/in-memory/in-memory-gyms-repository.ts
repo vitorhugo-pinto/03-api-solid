@@ -29,6 +29,10 @@ export class InMemoryGymsRepository implements GymsRepository {
     return gym
   }
 
+  async findAll() {
+    return this.gyms
+  }
+
   async search(searchFor: string, page: number, size: number) {
     const gyms = this.gyms
       .filter((gym) => gym.name.includes(searchFor))

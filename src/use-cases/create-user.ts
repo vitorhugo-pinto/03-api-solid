@@ -3,7 +3,7 @@ import { hash } from 'bcryptjs'
 import { UserAlreadyExistsError } from './errors/user-already-exists-error'
 import type { User } from '@prisma/client'
 
-interface ICreateUserUseCase {
+interface ICreateUserUseCaseRequest {
   name: string
   email: string
   password: string
@@ -24,7 +24,7 @@ export class CreateUserUseCase {
     name,
     email,
     password,
-  }: ICreateUserUseCase): Promise<ICreateUserCaseResponse> {
+  }: ICreateUserUseCaseRequest): Promise<ICreateUserCaseResponse> {
     const userFound = await this.usersRepository.findByEmail(email)
 
     if (userFound) throw new UserAlreadyExistsError()
