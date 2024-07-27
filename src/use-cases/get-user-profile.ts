@@ -7,7 +7,7 @@ interface IGetUserProfileRequest {
 }
 
 interface IGetUserProfileResponse {
-  user: User
+  user: Omit<User, 'password' | 'created_at'>
 }
 
 export class GetUserProfileUseCase {
@@ -25,7 +25,11 @@ export class GetUserProfileUseCase {
     if (!userFound) throw new ResourceNotFoundError()
 
     return {
-      user: userFound,
+      user: {
+        id: userFound.id,
+        name: userFound.name,
+        email: userFound.email,
+      },
     }
   }
 }
