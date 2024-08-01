@@ -20,7 +20,7 @@ export async function authenticateUser(
     const { user } = await authenticateUseCase.execute({ email, password })
 
     const token = await reply.jwtSign(
-      {},
+      {}, // payload
       {
         sign: {
           sub: user.id,
