@@ -7,15 +7,15 @@ jobs:
     name: Run E2E Tests
     runs-on: ubuntu-latest
 
-  services:
-    api-solid-pg:
-      image: bitnami/postgresql
-      ports:
-        - 5432:5432
-      env:
-        POSTGRESQL_USERNAME: docker
-        POSTGRESQL_PASSWORD: docker
-        POSTGRESQL_DATABASE: ignitenode03
+    services:
+      postgres:
+        image: bitnami/postgresql
+        ports:
+          - 5432:5432
+        env:
+          POSTGRESQL_USERNAME: docker
+          POSTGRESQL_PASSWORD: docker
+          POSTGRESQL_DATABASE: ignitenode03
 
     steps:
       - uses: actions/checkout@v4
@@ -23,7 +23,7 @@ jobs:
         with:
           version: 6.32.9
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@4
         with:
           node-version: 18
           cache: "pnpm"
