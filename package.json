@@ -12,7 +12,7 @@
     "test:watch": "vitest --dir src/use-cases",
     "test:coverage": "vitest run --coverage",
     "pretest:e2e": "pnpm link ./prisma/vitest-environment-prisma",
-    "test:e2e": "vitest run --dir src/http"
+    "test:e2e": "vitest run --dir=src/http"
   },
   "keywords": [],
   "author": "",
