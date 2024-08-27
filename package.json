@@ -11,7 +11,7 @@
     "test": "vitest run --dir src/use-cases",
     "test:watch": "vitest --dir src/use-cases",
     "test:coverage": "vitest run --coverage",
-    "pretest:e2e": "pnpm link ./prisma/vitest-environment-prisma",
+    "pretest:e2e": "npm link ./prisma/vitest-environment-prisma && npm link vitest-environment-prisma",
     "test:e2e": "vitest run --dir src/http"
   },
   "keywords": [],
