@@ -30,6 +30,8 @@ jobs:
 
       - run: pnpm install
 
+      - run: pnpm link ./prisma/vitest-environment-prisma && pnpm link --global vitest-environment-prisma
+
       - run: pnpm run test:e2e
         env:
           JWT_SECRET: testing
