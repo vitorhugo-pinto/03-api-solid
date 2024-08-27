@@ -1,4 +1,8 @@
 📦
+├─ .github/
+│ └ workflows/
+│ ├─ run-e2e-tests.yml
+│ └─ run-unit-tests.yml
 ├─ docker/
 ├─ prisma/
 └─ src
